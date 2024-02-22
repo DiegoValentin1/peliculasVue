@@ -1,8 +1,70 @@
 <template>
   <div>
     <h1>Peliculas</h1>
-    <div>
-      <b-button v-b-modal.modal-p>Agregar Pelicula</b-button>
+    <div style="display: grid; place-items: center; gap: 10px">
+      <div style="display: flex; flex-direction: row; gap: 10px">
+        <div
+          style="
+            width: 30%;
+            margin-left: 10px;
+            border: solid white 2px;
+            border-radius: 0.5rem;
+            display: grid;
+            place-items: center;
+          "
+        >
+          <p>Buscar por:</p>
+          <b-form-input
+            v-model="buscarparam"
+            placeholder="Buscar"
+            col="3"
+          ></b-form-input>
+        </div>
+        <div
+          style="
+            width: 30%;
+            margin-left: 10px;
+            border: solid white 2px;
+            border-radius: 0.5rem;
+            display: grid;
+            place-items: center;
+          "
+        >
+          <p>Fecha Inicio</p>
+          <b-form-input v-model="fechainicio" type="date"></b-form-input>
+        </div>
+        <div
+          style="
+            width: 30%;
+            margin-left: 10px;
+            border: solid white 2px;
+            border-radius: 0.5rem;
+            display: grid;
+            place-tems: center;
+          "
+        >
+          <p>Fecha Fin</p>
+          <b-form-input v-model="fechafin" type="date"></b-form-input>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: row; gap: 10px">
+        <b-button v-b-modal.modal-p>Agregar Pelicula</b-button>
+
+        <b-button @click="buscarPeliculasPorDirector"
+          >Buscar por director</b-button
+        >
+        <b-button @click="buscarPeliculasPorNombre">Buscar por titulo</b-button>
+        <b-button @click="buscarPeliculasPorFechaPublicacion"
+          >Buscar por rango fechas</b-button
+        >
+        <b-button @click="buscarPeliculasPorGenero"
+          >Buscar por categoria</b-button
+        >
+        <b-button @click="buscarPeliculasPorFechaPublicacionDesc"
+          >Buscar por fecha descendente</b-button
+        >
+      </div>
 
       <b-modal id="modal-1" title="BootstrapVue">
         <p class="my-4">Hello from modal!</p>
@@ -11,7 +73,7 @@
         <div>
           <b-form @submit="onSubmit2" @reset="onReset" v-if="show">
             <!-- Campo oculto para almacenar el ID de la película -->
-            <input type="hidden" v-model="form.id_movie" value="peliculasel"/>
+            <input type="hidden" v-model="form.id_movie" value="peliculasel" />
 
             <b-form-group
               id="input-group-2"
@@ -138,13 +200,21 @@
       <b-card
         v-for="(pelicula, index) in peliculas"
         :key="index"
-        :title="pelicula.name"
+        :title="pelicula.nombre"
         header-tag="header"
         footer-tag="footer"
         @click="setPelicula(pelicula.id_movie)"
       >
-        <b-card-text>Director: {{ pelicula.director_movie }}</b-card-text>
+        <b-card-text>Director: {{ pelicula.directorMovie }}</b-card-text>
         <b-card-text>Duración: {{ pelicula.duration }}</b-card-text>
+        <b-card-text
+          >Fecha:
+          {{
+            pelicula.fechaPublicacion
+              ? pelicula.fechaPublicacion.slice(0, 10)
+              : ""
+          }}</b-card-text
+        >
         <b-card-text>Género: {{ pelicula.genero.name }}</b-card-text>
         <template #header>
           <b-container align-h="center">
@@ -181,10 +251,13 @@ export default {
         duration: "",
         genero: null,
       },
+      buscarparam: "",
+      fechainicio:"",
+      fechafin:"",
       peliculas: [],
       generos: [],
       generos_id: [],
-      peliculasel:null,
+      peliculasel: null,
       show: true,
     };
   },
@@ -208,6 +281,68 @@ export default {
         console.log(this.generos);
       } catch (error) {
         console.error("Error al obtener géneros:", error);
+      }
+    },
+    async buscarPeliculasPorNombre() {
+      try {
+        const response = await servicioPeliculas.buscarPeliculaPorNombre(
+          this.buscarparam
+        );
+        this.peliculas = response;
+        console.log(this.peliculas);
+      } catch (error) {
+        console.error("Error al buscar películas por nombre:", error);
+      }
+    },
+    async buscarPeliculasPorDirector() {
+      try {
+        const response = await servicioPeliculas.buscarPeliculaPorDirector(
+          this.buscarparam
+        );
+        this.peliculas = response;
+        console.log(this.peliculas);
+      } catch (error) {
+        console.error("Error al buscar películas por director:", error);
+      }
+    },
+    async buscarPeliculasPorFechaPublicacion() {
+      try {
+        const response =
+          await servicioPeliculas.buscarPeliculaPorFechaPublicacion(
+            this.fechainicio,
+            this.fechafin
+          );
+        this.peliculas = response;
+        console.log(this.peliculas);
+      } catch (error) {
+        console.error(
+          "Error al buscar películas por rango de fechas de publicación:",
+          error
+        );
+      }
+    },
+    async buscarPeliculasPorGenero() {
+      try {
+        const response = await servicioPeliculas.buscarPeliculaPorGenero(
+          this.buscarparam
+        );
+        this.peliculas = response;
+        console.log(this.peliculas);
+      } catch (error) {
+        console.error("Error al buscar películas por género:", error);
+      }
+    },
+    async buscarPeliculasPorFechaPublicacionDesc() {
+      try {
+        const response =
+          await servicioPeliculas.buscarPeliculaPorFechaPublicacionDesc();
+        this.peliculas = response;
+        console.log(this.peliculas);
+      } catch (error) {
+        console.error(
+          "Error al buscar películas por fecha de publicación descendente:",
+          error
+        );
       }
     },
     async agregarPelicula() {
@@ -251,7 +386,7 @@ export default {
         await servicioPeliculas.actualizarPelicula({
           ...this.form,
           genero: { id_gen },
-          id_movie
+          id_movie,
         });
         alert("Película actualizada exitosamente");
         // Actualizar la lista de películas después de actualizar una
