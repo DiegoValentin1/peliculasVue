@@ -82,7 +82,7 @@
             >
               <b-form-input
                 id="input-2"
-                v-model="form.name"
+                v-model="form.nombre"
                 placeholder="Ingrese el nombre de la película"
                 required
               ></b-form-input>
@@ -95,7 +95,7 @@
             >
               <b-form-input
                 id="input-3"
-                v-model="form.director_movie"
+                v-model="form.directorMovie"
                 placeholder="Ingrese el nombre del director"
                 required
               ></b-form-input>
@@ -144,7 +144,7 @@
             >
               <b-form-input
                 id="input-2"
-                v-model="form.name"
+                v-model="form.nombre"
                 placeholder="Ingrese el nombre de la película"
                 required
               ></b-form-input>
@@ -157,7 +157,7 @@
             >
               <b-form-input
                 id="input-3"
-                v-model="form.director_movie"
+                v-model="form.directorMovie"
                 placeholder="Ingrese el nombre del director"
                 required
               ></b-form-input>
@@ -246,8 +246,8 @@ export default {
   data() {
     return {
       form: {
-        name: "",
-        director_movie: "",
+        nombre: "",
+        directorMovie: "",
         duration: "",
         genero: null,
       },
@@ -353,7 +353,7 @@ export default {
         const id_gen = fidegenero.id_gen;
         await servicioPeliculas.agregarPelicula({
           ...this.form,
-          genero: { id_gen },
+          genero: { id_gen }, fechaPublicacion: new Date().toISOString().slice(0, 10)
         });
         alert("Película agregada exitosamente");
         // Puedes recargar la lista de películas después de agregar una nueva si lo deseas
@@ -381,7 +381,7 @@ export default {
         const id_gen = fidegenero.id_gen;
         console.log({
           ...this.form,
-          genero: { id_gen },
+          genero: { id_gen }, fechaPublicacion: new Date().toISOString().slice(0, 10)
         });
         await servicioPeliculas.actualizarPelicula({
           ...this.form,
@@ -406,9 +406,10 @@ export default {
     onReset(event) {
       event.preventDefault();
       // Resetear los valores del formulario
-      this.form.director = "";
-      this.form.titulo = "";
-      this.form.duracion = "";
+      this.form.directorMovie = "";
+      this.form.nombre = "";
+      this.form.duration = "";
+      this.form.fechaPublicacion = "";
       this.form.genero = null;
       // Truco para resetear/limpiar el estado de validación del formulario del navegador
       this.show = false;
